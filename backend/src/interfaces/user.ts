@@ -9,8 +9,8 @@ export interface UserData {
 };
 
 export interface Iuser extends Document {
-  name: String;
-  email: String;
-  password: String;
-  image: String;
+  name: string;
+  email: string;
+  password: string;
+  image: string;
 }
