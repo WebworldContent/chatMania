@@ -27,12 +27,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
   try {
     const user: UserData = await fetch(email);
-
-    console.log(user);
-
     const isValidPassword = await bcrypt.compare(password, user.password);
-
-    console.log(isValidPassword);
 
     if (user && (isValidPassword)) {
       res
