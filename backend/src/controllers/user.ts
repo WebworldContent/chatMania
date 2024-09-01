@@ -29,15 +29,34 @@ export const loginUser = async (req: Request, res: Response) => {
     const user: UserData = await fetch(email);
     const isValidPassword = await bcrypt.compare(password, user.password);
 
-    if (user && (isValidPassword)) {
-      res
-        .status(200)
-        .send({ id: user._id, email: user.email, token: generateToken(user._id, email) });
+    if (user && isValidPassword) {
+      res.status(200).send({
+        id: user._id,
+        email: user.email,
+        token: generateToken(user._id, email),
+        status: 1,
+      });
     } else {
       res.status(401).send({ msg: "Invalid email or password", status: 0 });
     }
   } catch (error) {
     console.log(error);
     res.status(500).send({ msg: "Error logining user", status: 0 });
+  }
+};
+
+export const fetchUserDetails = async (req: Request, res: Response) => {
+  const { email } = req.params;
+  try {
+    const user: UserData = await fetch(email);
+    res.status(200).send({
+      email: user.email,
+      image: user.image,
+      name: user.name,
+      status: 1,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ msg: "Error getting user details", status: 0 });
   }
 };
