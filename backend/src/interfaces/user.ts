@@ -7,7 +7,6 @@ export interface UserData {
   password: string;
   image: string;
 };
-
 export interface Iuser extends Document {
   name: string;
   email: string;

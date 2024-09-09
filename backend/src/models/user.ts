@@ -31,3 +31,11 @@ export const fetch = async (email: string): Promise<UserData> => {
     throw error;
   }
 };
+
+export const fetchAll = async (): Promise<Array<UserData>> => {
+  try {
+    return await User.find({})
+  } catch (error) {
+    throw error;
+  }
+};

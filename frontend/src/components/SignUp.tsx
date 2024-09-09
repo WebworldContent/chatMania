@@ -2,7 +2,11 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import { UserData } from "../interfaces"
 import { createUser } from "../services/register";
 
-const SignUp = () => {
+type SignUpProps = {
+  setCurrentTab: (data: string) => void;
+};
+
+const SignUp = ({ setCurrentTab }: SignUpProps) => {
   const { register, handleSubmit, setError, formState: { errors } } = useForm<UserData>();
 
   const onSubmit: SubmitHandler<UserData> = async (data) => {
@@ -21,6 +25,7 @@ const SignUp = () => {
       const response = await createUser(updatedData);
       if (response.status) {
         console.log(`User is created!`);
+        setCurrentTab('signin');
       }
     } catch (error) {
       console.log(error);

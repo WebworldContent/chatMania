@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { create, fetch } from "../models/user";
+import { create, fetch, fetchAll } from "../models/user";
 import bcrypt from "bcrypt";
 import { UserData } from "../interfaces/user";
 import { generateToken } from "../utils/generateToken";
@@ -56,7 +56,20 @@ export const fetchUserDetails = async (req: Request, res: Response) => {
       status: 1,
     });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send({ msg: "Error getting user details", status: 0 });
+  }
+};
+
+export const fetchUsers = async (req: Request, res: Response) => {
+  try {
+    const users: UserData[] = await fetchAll();
+    res.status(200).send({
+      data: users,
+      status: 1,
+    });
+  } catch (error) {
+    console.log(error.message);
     res.status(500).send({ msg: "Error getting user details", status: 0 });
   }
 };
