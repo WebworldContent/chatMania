@@ -13,7 +13,11 @@ const useLocalStore = () => {
     return item ? JSON.parse(item) : [];
   };
 
-  return { setToLocal, getLocalItem };
+  const removeLocal = (key: string) => {
+    window.localStorage.removeItem(key);
+  };
+
+  return { setToLocal, getLocalItem, removeLocal };
 };
 
 export default useLocalStore;

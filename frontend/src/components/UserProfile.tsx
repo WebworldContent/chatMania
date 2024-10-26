@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import useLocalStore from "../helpers/localStore"
 import { fetchUser } from "../services/user";
 import { useNavigate } from "react-router-dom";
@@ -11,8 +11,9 @@ const UserProfile = () => {
     name: ''
   });
   const navigate = useNavigate();
-  const { getLocalItem } = useLocalStore();
+  const { getLocalItem, removeLocal } = useLocalStore();
   const { email, token } = getLocalItem('data');
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -41,9 +42,14 @@ const UserProfile = () => {
 
   }, [getLocalItem, email, token, navigate]);
 
+  const handleLogout = (e: MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    removeLocal('data');
+  };
+
   return (
     <div className="mr-5">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4" onClick={() => setShowProfile(!showProfile)}>
         <div className="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
           <img src={user.image ?? '../assets/default.jpg'} className="w-200 h-200 rounded-lg" />
         </div>
@@ -53,6 +59,13 @@ const UserProfile = () => {
           <div className="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
         </div>
       </div>
+      {showProfile && (<div className="profile-dropdown z-50 w-52 h-40">
+        <ul className="dropdown-content text-center text-stone-950 font-sans">
+          <li><a href="#">Profile</a></li>
+          <li><a href="#">Settings</a></li>
+          <li><a href="#" onClick={handleLogout}>Logout</a></li>
+        </ul>
+      </div>)}
     </div>
   )
 }
