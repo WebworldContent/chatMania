@@ -34,6 +34,14 @@ export const protect = async (
 
   try {
     const token = authorization.split("Bearer ")[1].trim();
+
+    console.log(token, typeof token);
+
+    if (!token) {
+      res.status(403);
+      throw new Error("No authorization token");
+    }
+
     const decoded = await verifyToken(token);
 
     const user = await User.findOne({ email: (decoded as any).email });

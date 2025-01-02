@@ -2,10 +2,10 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import { LoginUser } from "../interfaces";
 import { signInUser } from "../services/login";
 import { useNavigate } from "react-router-dom";
-import useLocalStore from "../helpers/localStore";
+import { useUserProvider } from "../helpers/customHooks/userProvider";
 
 const SignIn = () => {
-  const { setToLocal } = useLocalStore();
+  const { setUserData } = useUserProvider(); 
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm<LoginUser>()
 
@@ -16,7 +16,7 @@ const SignIn = () => {
       if (response.status) {
         console.log(response);
         const { token, email } = response;
-        setToLocal({ token, email }); // will use redux here
+        setUserData({ token, email }); // will use redux here moving forward instead of context API
         navigate('/');
       } else {
         navigate('/login');

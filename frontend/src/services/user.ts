@@ -2,8 +2,8 @@ import axios from "axios";
 import { UserData } from "../interfaces";
 
 export const fetchUser = async (
-  email: string,
-  token: string
+  email: string | undefined,
+  token: string | undefined
 ): Promise<UserData> => {
   if (!email || !token) {
     throw new Error("Email and token must be provided.");
@@ -33,8 +33,12 @@ export const fetchUser = async (
   }
 };
 
-export const fetchAllUsers = async (token: string): Promise<Array<UserData>> => {
+export const fetchAllUsers = async (token: string | undefined): Promise<Array<UserData> | null> => {
   try {
+    if (!token) {
+      return null;
+    }
+
     const { data: { data } } = await axios.get(`http://localhost:5000/users`, {
       headers: {
         Authorization: `Bearer ${token}`,

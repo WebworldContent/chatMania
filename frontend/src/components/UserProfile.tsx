@@ -1,8 +1,8 @@
 import { MouseEvent, useEffect, useState } from "react";
-import useLocalStore from "../helpers/localStore"
 import { fetchUser } from "../services/user";
 import { useNavigate } from "react-router-dom";
 import { UserData } from "../interfaces";
+import { useUserProvider } from "../helpers/customHooks/userProvider";
 
 const UserProfile = () => {
   const [user, setUser] = useState<UserData>({
@@ -11,8 +11,8 @@ const UserProfile = () => {
     name: ''
   });
   const navigate = useNavigate();
-  const { getLocalItem, removeLocal } = useLocalStore();
-  const { email, token } = getLocalItem('data');
+  const { userData, setUserData } = useUserProvider();
+  const {token, email} = userData || {};
   const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
@@ -40,11 +40,11 @@ const UserProfile = () => {
 
     getUser()
 
-  }, [getLocalItem, email, token, navigate]);
+  }, [email, token, navigate]);
 
   const handleLogout = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    removeLocal('data');
+    setUserData(null);
   };
 
   return (

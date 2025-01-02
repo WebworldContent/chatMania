@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetch = exports.create = void 0;
+exports.fetchAll = exports.fetch = exports.create = void 0;
 const user_1 = __importDefault(require("../schemas/user"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const create = async (data) => {
@@ -34,4 +34,13 @@ const fetch = async (email) => {
     }
 };
 exports.fetch = fetch;
+const fetchAll = async () => {
+    try {
+        return await user_1.default.find({});
+    }
+    catch (error) {
+        throw error;
+    }
+};
+exports.fetchAll = fetchAll;
 //# sourceMappingURL=user.js.map

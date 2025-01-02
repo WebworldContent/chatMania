@@ -1,23 +1,30 @@
 import { useEffect, useState } from "react"
 import { fetchAllUsers } from "../../services/user";
-import useLocalStore from "../../helpers/localStore";
 import { UserData } from "../../interfaces";
+import { useUserProvider } from "../../helpers/customHooks/userProvider";
 
 const ChatListing = () => {
   const [users, setUsers] = useState<Array<UserData>>([]);
-  const { getLocalItem } = useLocalStore();
-  const { email, token } = getLocalItem('data');
+  const { userData } = useUserProvider();
+  const { email, token } = userData || {};
 
   useEffect(() => {
     const getUsers = async () => {
       try {
         const response = await fetchAllUsers(token);
+        if (!response) {
+          throw new Error('No user available');
+        }
         const usersExceptLoginOne: UserData[] = response.filter(user => user.email !== email);
         setUsers(usersExceptLoginOne);
         console.log(response);
       } catch (error) {
         console.log(error);
       }
+    }
+
+    if (!token) {
+      return;
     }
 
     getUsers()
