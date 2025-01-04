@@ -35,8 +35,6 @@ export const protect = async (
   try {
     const token = authorization.split("Bearer ")[1].trim();
 
-    console.log(token, typeof token);
-
     if (!token) {
       res.status(403);
       throw new Error("No authorization token");

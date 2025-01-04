@@ -2,11 +2,15 @@ import { useEffect, useState } from "react"
 import { fetchAllUsers } from "../../services/user";
 import { UserData } from "../../interfaces";
 import { useUserProvider } from "../../helpers/customHooks/userProvider";
+import io from "socket.io-client";
 
+const SERVER_ENDPOINT = 'http://localhost:5000';
 const ChatListing = () => {
   const [users, setUsers] = useState<Array<UserData>>([]);
   const { userData } = useUserProvider();
   const { email, token } = userData || {};
+  console.log(email, token);
+  const [socketConnected, setSocketConnected] = useState<boolean>(false);
 
   useEffect(() => {
     const getUsers = async () => {
@@ -17,7 +21,6 @@ const ChatListing = () => {
         }
         const usersExceptLoginOne: UserData[] = response.filter(user => user.email !== email);
         setUsers(usersExceptLoginOne);
-        console.log(response);
       } catch (error) {
         console.log(error);
       }
@@ -31,6 +34,12 @@ const ChatListing = () => {
 
   }, [token, email]);
 
+  const handleConnect = (user: UserData) => {
+    const server = io(SERVER_ENDPOINT);
+    server.emit('setup', user);
+    server.on('connected', () => setSocketConnected(true));
+  }
+
   return (
     <div className="h-auto flex flex-col shadow-2xl w-1/3 p-5 bg-slate-100 m-5">
       <div className="flex justify-between">
@@ -39,7 +48,7 @@ const ChatListing = () => {
       </div>
       <div className="w-full h-screen bg-slate-200 rounded-lg mt-5 p-2">
         <ul className="p-1 mb-5">
-          {users.map(user => (<li className="p-3 w-full bg-cyan-300 rounded-xl" key={user.email}>
+          {users.map(user => (<li className="p-3 mb-3 active:shadow-sm shadow-lg w-full active:bg-cyan-500 hover:bg-cyan-400 bg-cyan-300 rounded-xl" key={user.email} onClick={() => handleConnect(user)} >
             <div className="font-serif font-medium text-center text-xl">{user.name}</div><div className="font-mono font-light text-gray-700 text-center text-sm">{user.email}</div></li>))}
         </ul>
       </div>

@@ -9,7 +9,6 @@ const user_1 = __importDefault(require("../schemas/user"));
 const config_1 = require("../config");
 // Helper function to verify token asynchronously
 const verifyToken = (token) => {
-    console.log(token);
     return new Promise((resolve, reject) => {
         (0, jsonwebtoken_1.verify)(token.trim(), config_1.JWT_SECRET, (err, decoded) => {
             if (err) {
@@ -28,6 +27,11 @@ const protect = async (req, res, next) => {
     }
     try {
         const token = authorization.split("Bearer ")[1].trim();
+
+        if (!token) {
+            res.status(403);
+            throw new Error("No authorization token");
+        }
         const decoded = await verifyToken(token);
         const user = await user_1.default.findOne({ email: decoded.email });
         if (!user) {
