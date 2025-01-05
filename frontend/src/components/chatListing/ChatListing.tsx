@@ -1,43 +1,32 @@
 import { useEffect, useState } from "react"
 import { fetchAllUsers } from "../../services/user";
 import { UserData } from "../../interfaces";
-import { useUserProvider } from "../../helpers/customHooks/userProvider";
 import io from "socket.io-client";
 
 const SERVER_ENDPOINT = 'http://localhost:5000';
 const ChatListing = () => {
   const [users, setUsers] = useState<Array<UserData>>([]);
-  const { userData } = useUserProvider();
-  const { email, token } = userData || {};
-  console.log(email, token);
-  const [socketConnected, setSocketConnected] = useState<boolean>(false);
+  // const [socketConnected, setSocketConnected] = useState<boolean>(false);
 
   useEffect(() => {
-    const getUsers = async () => {
+    (async () => {
       try {
-        const response = await fetchAllUsers(token);
+        const response = await fetchAllUsers();
         if (!response) {
           throw new Error('No user available');
         }
-        const usersExceptLoginOne: UserData[] = response.filter(user => user.email !== email);
-        setUsers(usersExceptLoginOne);
+
+        setUsers(response);
       } catch (error) {
         console.log(error);
       }
-    }
-
-    if (!token) {
-      return;
-    }
-
-    getUsers()
-
-  }, [token, email]);
+    })()
+  }, []);
 
   const handleConnect = (user: UserData) => {
     const server = io(SERVER_ENDPOINT);
     server.emit('setup', user);
-    server.on('connected', () => setSocketConnected(true));
+    // server.on('connected', () => setSocketConnected(true));
   }
 
   return (

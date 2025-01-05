@@ -1,5 +1,5 @@
 import { MouseEvent, useEffect, useState } from "react";
-import { fetchUser } from "../services/user";
+import { fetchUser, logoutUser } from "../services/user";
 import { useNavigate } from "react-router-dom";
 import { UserData } from "../interfaces";
 import { useUserProvider } from "../helpers/customHooks/userProvider";
@@ -12,13 +12,13 @@ const UserProfile = () => {
   });
   const navigate = useNavigate();
   const { userData, setUserData } = useUserProvider();
-  const {token, email} = userData || {};
+  const { email } = userData || {};
   const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
-    const getUser = async () => {
+    (async () => {
       try {
-        const response: UserData = await fetchUser(email, token);
+        const response: UserData = await fetchUser(email || sessionStorage.getItem('email'));
         setUser({ ...response });
       } catch (error) {
         if (error instanceof Error) {
@@ -31,19 +31,13 @@ const UserProfile = () => {
           console.error('Unexpected error:', error);
         }
       }
-    };
+    })()
 
-    if (!token) {
-      navigate('/login');
-      return;
-    }
-
-    getUser()
-
-  }, [email, token, navigate]);
+  }, [email, navigate]);
 
   const handleLogout = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+    logoutUser();
     setUserData(null);
   };
 

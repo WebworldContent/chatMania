@@ -24,7 +24,11 @@ export const create = async (data: UserData): Promise<Iuser | undefined> => {
   }
 };
 
-export const fetch = async (email: string): Promise<UserData> => {
+export const fetch = async (email: string | undefined): Promise<UserData> => {
+  if (!email) {
+    return;
+  }
+
   try {
     return await User.findOne({ email });
   } catch (error) {

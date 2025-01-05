@@ -2,17 +2,16 @@ import axios from "axios";
 import { UserData } from "../interfaces";
 
 export const fetchUser = async (
-  email: string | undefined,
-  token: string | undefined
+  email: string | null,
 ): Promise<UserData> => {
-  if (!email || !token) {
-    throw new Error("Email and token must be provided.");
+  if (!email) {
+    throw new Error("Email must be provided.");
   }
 
   try {
     const { data } = await axios.get(`http://localhost:5000/user/${email}`, {
+      withCredentials: true,
       headers: {
-        Authorization: `Bearer ${token}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
@@ -33,15 +32,11 @@ export const fetchUser = async (
   }
 };
 
-export const fetchAllUsers = async (token: string | undefined): Promise<Array<UserData> | null> => {
+export const fetchAllUsers = async (): Promise<Array<UserData> | null> => {
   try {
-    if (!token) {
-      return null;
-    }
-
     const { data: { data } } = await axios.get(`http://localhost:5000/users`, {
+      withCredentials: true,
       headers: {
-        Authorization: `Bearer ${token}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
@@ -49,7 +44,7 @@ export const fetchAllUsers = async (token: string | undefined): Promise<Array<Us
     return data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      if (error.response && error.response.status === 402) {
+      if (error.response && (error.response.status === 402 || error.response.status === 401)) {
         throw new Error("Token expired");
       } else {
         console.error("Error fetching all users:", error.message);
@@ -61,3 +56,7 @@ export const fetchAllUsers = async (token: string | undefined): Promise<Array<Us
     }
   }
 };
+
+export const logoutUser = async (): Promise<void> => {
+  await axios.get('http://localhost:5000/logout');
+}; 

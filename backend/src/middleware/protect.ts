@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
 import User from "../schemas/user";
 import { JWT_SECRET } from "../config";
+
 interface AuthUser extends Request {
   user?: any;
 }
@@ -25,18 +26,12 @@ export const protect = async (
   next: NextFunction
 ) => {
   const {
-    headers: { authorization },
+    cookies : { token = '' }
   } = req;
 
-  if (!authorization || !authorization.startsWith("Bearer ")) {
-    return res.redirect("/login");
-  }
-
   try {
-    const token = authorization.split("Bearer ")[1].trim();
-
     if (!token) {
-      res.status(403);
+      res.status(401);
       throw new Error("No authorization token");
     }
 
@@ -45,11 +40,11 @@ export const protect = async (
     const user = await User.findOne({ email: (decoded as any).email });
 
     if (!user) {
-      res.status(401);
-      throw new Error("Not authorized, user not found");
+      res.status(404);
+      throw new Error("User not found");
     }
 
-    req.user = user;
+    req.body.user = user;
 
     next();
   } catch (error) {

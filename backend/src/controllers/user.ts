@@ -30,8 +30,12 @@ export const loginUser = async (req: Request, res: Response) => {
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (user && isValidPassword) {
-      res.status(200).send({
-        id: user._id,
+      res.status(200).cookie('token', generateToken(user._id, email), {
+        expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+      }).send({
         email: user.email,
         token: generateToken(user._id, email),
         status: 1,
@@ -45,10 +49,20 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-export const fetchUserDetails = async (req: Request, res: Response) => {
-  const { email } = req.params;
+export const fetchUserDetails = async (req: Request, res: Response): Promise<void> => {
+  const email = req.params.email || req.body?.user?.email;
+
   try {
+    if (!email) {
+      throw new Error('Email is required');
+    }
+
     const user: UserData = await fetch(email);
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
     res.status(200).send({
       email: user.email,
       image: user.image,
@@ -57,19 +71,47 @@ export const fetchUserDetails = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send({ msg: "Error getting user details", status: 0 });
+
+    if (error instanceof Error) {
+      switch(error.message) {
+        case 'Email is required':
+          res.status(405).send({msg: error.message, status: 0});
+          break;
+        case 'User not found':
+          res.status(404).send({msg: error.message, status: 0});
+          break;
+        default:
+          res.status(500).send({msg: 'An unexpected error occured', status: 0});
+          break;
+      }
+    } else {
+      res.status(500).send({ msg: "Error getting user details", status: 0 });
+    }
   }
 };
 
 export const fetchUsers = async (req: Request, res: Response) => {
   try {
     const users: UserData[] = await fetchAll();
+    const filteredUsers = users.filter(user => user.email !== req.body?.user?.email);
     res.status(200).send({
-      data: users,
+      data: filteredUsers,
       status: 1,
     });
   } catch (error) {
     console.log(error.message);
     res.status(500).send({ msg: "Error getting user details", status: 0 });
+  }
+};
+
+export const logoutUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict'
+    }).status(200).send({ msg: "Logged out successfully", status: 1 });
+  } catch (error) {
+    res.status(502).send({msg: "Error while logging out", status: 0});
   }
 };

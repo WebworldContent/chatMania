@@ -1,7 +1,6 @@
 import { createContext, ReactNode, useState } from "react";
 
 interface GlobalUserData {
-    token: string;
     email: string;
 }
 

@@ -6,6 +6,7 @@ import { dbConnect } from './dbConfig';
 import helmet from 'helmet';
 import { PORT } from './config';
 import { Server } from 'socket.io';
+import cookieParser from 'cookie-parser'
 
 const app = express();
 const server = createServer(app)
@@ -17,8 +18,12 @@ const io = new Server(server, {
 dbConnect();
 
 app.use(express.json());
+app.use(cookieParser()); // parse cookie
 app.use(helmet()); // Add security to headers
-app.use(cors()); // allowing cors request
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+})); // allowing cors request
 
 //socket connection
 io.on('connection', (socket) => {

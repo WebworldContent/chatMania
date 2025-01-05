@@ -11,12 +11,10 @@ const SignIn = () => {
 
   const onSubmit: SubmitHandler<LoginUser> = async (data) => {
     try {
-      console.log(data);
       const response = await signInUser(data);
       if (response.status) {
-        console.log(response);
-        const { token, email } = response;
-        setUserData({ token, email }); // will use redux here moving forward instead of context API
+        const { email } = response;
+        setUserData({ email });
         navigate('/');
       } else {
         navigate('/login');
