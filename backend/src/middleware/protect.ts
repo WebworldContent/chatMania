@@ -29,10 +29,11 @@ export const protect = async (
     cookies : { token = '' }
   } = req;
 
+  console.log(token);
+
   try {
     if (!token) {
-      res.status(401);
-      throw new Error("No authorization token");
+      throw new Error("No token");
     }
 
     const decoded = await verifyToken(token);
@@ -49,11 +50,24 @@ export const protect = async (
     next();
   } catch (error) {
     console.error(error);
+
+    if (error instanceof Error) {
+      switch(error.message){
+        case 'No token':
+          res.status(406).json({ msg: error.message, status: 0 });
+          break;
+        default:
+          res.status(500).json({ msg: 'An unexpected error occured', status: 0 });
+          break;
+      }
+      return;
+    }
     if (error.name === "TokenExpiredError") {
       return res
-        .status(402)
-        .json({ message: "Token expired, please login again" });
+        .status(403)
+        .json({ msg: "Token expired, please login again" });
     }
-    res.status(401).json({ message: "Not authorized, token failed" });
+
+    res.status(401).json({ msg: "Not authorized, token failed" });
   }
 };

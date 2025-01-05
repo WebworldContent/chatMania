@@ -17,3 +17,8 @@ export interface SignData {
   id: string;
   email: string;
 }
+
+export interface Logout {
+  msg: string;
+  status: number;
+}

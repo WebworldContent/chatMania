@@ -2,10 +2,12 @@ import { useEffect, useState } from "react"
 import { fetchAllUsers } from "../../services/user";
 import { UserData } from "../../interfaces";
 import io from "socket.io-client";
+import { useNavigate } from "react-router-dom";
 
 const SERVER_ENDPOINT = 'http://localhost:5000';
 const ChatListing = () => {
   const [users, setUsers] = useState<Array<UserData>>([]);
+  const navigate = useNavigate();
   // const [socketConnected, setSocketConnected] = useState<boolean>(false);
 
   useEffect(() => {
@@ -19,6 +21,15 @@ const ChatListing = () => {
         setUsers(response);
       } catch (error) {
         console.log(error);
+        if (error instanceof Error) {
+          if (error.message === 'Token expired' || error.message === 'No token') {
+            navigate('/login');
+          } else {
+            console.error('Error fetching user:', error.message);
+          }
+        } else {
+          console.error('Unexpected error:', error);
+        }
       }
     })()
   }, []);

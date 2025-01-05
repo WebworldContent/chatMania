@@ -22,7 +22,7 @@ const UserProfile = () => {
         setUser({ ...response });
       } catch (error) {
         if (error instanceof Error) {
-          if (error.message === 'Token expired') {
+          if (error.message === 'Token expired' || error.message === 'No token') {
             navigate('/login');
           } else {
             console.error('Error fetching user:', error.message);
@@ -35,10 +35,19 @@ const UserProfile = () => {
 
   }, [email, navigate]);
 
-  const handleLogout = (e: MouseEvent<HTMLAnchorElement>) => {
+  const handleLogout = async (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    logoutUser();
-    setUserData(null);
+    try {
+      const response = await logoutUser();
+      if (!response.status) {
+        throw Error;
+      }
+      setUserData(null);
+      navigate('/login');
+    } catch (error) {
+      console.log(error)
+    }
+    
   };
 
   return (
