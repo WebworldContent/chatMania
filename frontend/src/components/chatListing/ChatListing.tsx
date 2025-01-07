@@ -32,7 +32,7 @@ const ChatListing = () => {
         }
       }
     })()
-  }, []);
+  }, [navigate]);
 
   const handleConnect = (user: UserData) => {
     const server = io(SERVER_ENDPOINT);

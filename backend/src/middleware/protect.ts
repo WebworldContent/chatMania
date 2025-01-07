@@ -49,7 +49,7 @@ export const protect = async (
 
     next();
   } catch (error) {
-    console.error(error);
+    console.error("Error caught: ", error.message);
 
     if (error instanceof Error) {
       switch(error.message){
