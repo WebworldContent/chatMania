@@ -1,11 +1,17 @@
 import axios from "axios";
 import { Logout, UserData } from "../interfaces";
 
+const customError = (name: string, error: Error): Error => {
+  const customError = error;
+  customError.name = name;
+  return error;
+};
+
 export const fetchUser = async (
   email: string | null,
 ): Promise<UserData> => {
   if (!email) {
-    throw new Error("Email must be provided.");
+    throw customError('NoEmail', new Error("Email does not exists"));
   }
 
   try {
@@ -20,12 +26,12 @@ export const fetchUser = async (
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response && error.response.status === 402) {
-        throw new Error("Token expired");
+        throw customError('TokenExpired', new Error("Token expired"));
       } else if (error.response && error.response.status === 406) {
-        throw new Error("No Token");
+        throw customError('NoToken', new Error("No Token"));
       } else {
         console.error("Error fetching user:", error.message);
-        throw new Error("Error fetching user");
+        throw customError('NoUserFetched', new Error("Error fetching user"));
       }
     } else {
       console.error("Unexpected error:", error);
@@ -47,12 +53,12 @@ export const fetchAllUsers = async (): Promise<Array<UserData> | null> => {
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response && (error.response.status === 402 || error.response.status === 401)) {
-        throw new Error("Token expired");
+        throw customError('TokenExpired', new Error("Token expired"));
       } else if (error.response && error.response.status === 406) {
-        throw new Error("No token");
+        throw customError('NoToken', new Error("No Token"));
       } else {
         console.error("Error fetching all users:", error.message);
-        throw new Error("Error fetching all users");
+        throw customError('NoUserFetched', new Error("Error fetching user"));
       }
     } else {
       console.error("Unexpected error:", error);

@@ -9,5 +9,6 @@ userRoute.post('/register', validator_1.validateRegister, validator_1.handleVali
 userRoute.post('/login', validator_1.validateLogin, validator_1.handleValidationError, user_1.loginUser);
 userRoute.get('/user/:email', protect_1.protect, user_1.fetchUserDetails);
 userRoute.get('/users', protect_1.protect, user_1.fetchUsers);
+userRoute.get('/logout', protect_1.protect, user_1.logoutUser);
 exports.default = userRoute;
 //# sourceMappingURL=user.js.map

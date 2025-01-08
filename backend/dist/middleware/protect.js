@@ -21,34 +21,39 @@ const verifyToken = (token) => {
     });
 };
 const protect = async (req, res, next) => {
-    const { headers: { authorization }, } = req;
-    if (!authorization || !authorization.startsWith("Bearer ")) {
-        return res.redirect("/login");
-    }
+    const { cookies: { token = '' } } = req;
     try {
-        const token = authorization.split("Bearer ")[1].trim();
-
         if (!token) {
-            res.status(403);
-            throw new Error("No authorization token");
+            throw new Error("No token");
         }
         const decoded = await verifyToken(token);
         const user = await user_1.default.findOne({ email: decoded.email });
         if (!user) {
-            res.status(401);
-            throw new Error("Not authorized, user not found");
+            res.status(404);
+            throw new Error("User not found");
         }
-        req.user = user;
+        req.body.user = user;
         next();
     }
     catch (error) {
-        console.error(error);
+        console.error("Error caught: ", error.message);
+        if (error instanceof Error) {
+            switch (error.message) {
+                case 'No token':
+                    res.status(406).json({ msg: error.message, status: 0 });
+                    break;
+                default:
+                    res.status(500).json({ msg: 'An unexpected error occured', status: 0 });
+                    break;
+            }
+            return;
+        }
         if (error.name === "TokenExpiredError") {
             return res
                 .status(403)
-                .json({ message: "Token expired, please login again" });
+                .json({ msg: "Token expired, please login again" });
         }
-        res.status(401).json({ message: "Not authorized, token failed" });
+        res.status(401).json({ msg: "Not authorized, token failed" });
     }
 };
 exports.protect = protect;

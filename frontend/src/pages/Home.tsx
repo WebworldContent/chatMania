@@ -3,6 +3,7 @@ import ChatBox from "../components/chatSection/CharBox"
 import Header from "../components/Header"
 
 const Home = () => {
+
     return (
         <>
             <Header />

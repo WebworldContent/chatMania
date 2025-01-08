@@ -5,7 +5,7 @@ const jsonwebtoken_1 = require("jsonwebtoken");
 const config_1 = require("../config");
 const generateToken = (id, email) => {
     return (0, jsonwebtoken_1.sign)({ id, email }, config_1.JWT_SECRET, {
-        expiresIn: "1h",
+        expiresIn: "5h",
     });
 };
 exports.generateToken = generateToken;

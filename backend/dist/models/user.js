@@ -26,6 +26,9 @@ const create = async (data) => {
 };
 exports.create = create;
 const fetch = async (email) => {
+    if (!email) {
+        return;
+    }
     try {
         return await user_1.default.findOne({ email });
     }

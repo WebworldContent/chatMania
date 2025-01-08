@@ -22,7 +22,7 @@ const ChatListing = () => {
       } catch (error) {
         console.log(error);
         if (error instanceof Error) {
-          if (error.message === 'Token expired' || error.message === 'No token') {
+          if (error.name === 'TokenExpired' || error.name === 'NoToken' || error.name === 'NoEmail') {
             navigate('/login');
           } else {
             console.error('Error fetching user:', error.message);

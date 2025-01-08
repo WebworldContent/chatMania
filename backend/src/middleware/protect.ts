@@ -29,8 +29,6 @@ export const protect = async (
     cookies : { token = '' }
   } = req;
 
-  console.log(token);
-
   try {
     if (!token) {
       throw new Error("No token");
@@ -41,7 +39,7 @@ export const protect = async (
     const user = await User.findOne({ email: (decoded as any).email });
 
     if (!user) {
-      res.status(404);
+      res.status(404).json({ msg: 'User not found', status: 0 });
       throw new Error("User not found");
     }
 
