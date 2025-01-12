@@ -1,7 +1,7 @@
 import axios from "axios";
-import { UserData } from "../interfaces";
+import { SuccessData, UserData } from "../interfaces";
 
-export const createUser = async (userData: UserData) => {
+export const createUser = async (userData: UserData): Promise<SuccessData> => {
   try {
     const { data } = await axios.post(`http://localhost:5000/register`, {
       ...userData,

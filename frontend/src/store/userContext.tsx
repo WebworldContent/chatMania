@@ -1,26 +1,25 @@
 import { createContext, ReactNode, useState } from "react";
-
-interface GlobalUserData {
-    email: string;
-}
+import { UserData } from "../interfaces";
 
 interface UserContextType {
-    userData: GlobalUserData | null;
-    setUserData: (user: GlobalUserData | null) => void;
+  userData: UserData | null;
+  setUserData: (user: UserData | null) => void;
 }
 
 interface UserProviderProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
-export const UserContext = createContext<UserContextType | undefined>(undefined);
+export const UserContext = createContext<UserContextType | undefined>(
+  undefined
+);
 
 export const UserProvider = ({ children }: UserProviderProps): JSX.Element => {
-    const [userData, setUserData] = useState<GlobalUserData | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
-    return (
-        <UserContext.Provider value={{userData, setUserData}}>
-         { children }
-        </UserContext.Provider>
-    );
+  return (
+    <UserContext.Provider value={{ userData, setUserData }}>
+      {children}
+    </UserContext.Provider>
+  );
 };

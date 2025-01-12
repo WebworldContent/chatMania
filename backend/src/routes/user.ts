@@ -7,7 +7,7 @@ const userRoute = Router();
 
 userRoute.post('/register', validateRegister, handleValidationError, createUser);
 userRoute.post('/login', validateLogin, handleValidationError, loginUser);
-userRoute.get('/user/:email', protect, fetchUserDetails);
+userRoute.get('/user', protect, fetchUserDetails);
 userRoute.get('/users', protect, fetchUsers);
 userRoute.get('/logout', protect, logoutUser);
 

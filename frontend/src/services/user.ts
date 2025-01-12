@@ -7,15 +7,9 @@ const customError = (name: string, error: Error): Error => {
   return error;
 };
 
-export const fetchUser = async (
-  email: string | null,
-): Promise<UserData> => {
-  if (!email) {
-    throw customError('NoEmail', new Error("Email does not exists"));
-  }
-
+export const fetchUser = async (): Promise<UserData> => {
   try {
-    const { data } = await axios.get(`http://localhost:5000/user/${email}`, {
+    const { data } = await axios.get(`http://localhost:5000/user`, {
       withCredentials: true,
       headers: {
         Accept: "application/json",
@@ -25,7 +19,7 @@ export const fetchUser = async (
     return data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      if (error.response && error.response.status === 402) {
+      if (error.response && (error.response.status === 402 || error.response.status === 401)) {
         throw customError('TokenExpired', new Error("Token expired"));
       } else if (error.response && error.response.status === 406) {
         throw customError('NoToken', new Error("No Token"));

@@ -6,6 +6,30 @@ export interface UserData {
   repeatPassword?: string
 }
 
+export interface SuccessData {
+  msg: string,
+  status: number
+}
+
+export interface MessageData {
+  email: string;
+  name: string;
+  message: string;
+}
+
+export interface UserChatData {
+  email: string;
+  name: string;
+  messages: string[];
+}
+
+export interface ChatData {
+  groupChat: boolean;
+  users: UserChatData[];
+  chatName: string;
+  _id?: string;
+}
+
 export interface LoginUser {
   email: string;
   password: string;
