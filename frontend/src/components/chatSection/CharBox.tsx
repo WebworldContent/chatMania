@@ -12,7 +12,9 @@ const ChatBox = () => {
   const server = useRef<Socket | null>(null);
 
   useEffect(() => {
-    server.current = io(SERVER_ENDPOINT);
+    server.current = io(SERVER_ENDPOINT, {
+      withCredentials: true
+    });
 
     return () => {
       server.current?.disconnect();

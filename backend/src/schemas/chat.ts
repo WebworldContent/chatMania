@@ -6,8 +6,8 @@ const chatSchema = new Schema<IChat>(
     groupChat: { type: Boolean, default: false },
     users: [
       {
-        name: { type: String, required: true },
-        email: { type: String, required: true },
+        name: { type: String },
+        email: { type: String },
         messages: [{ type: String }],
       },
     ],
@@ -16,6 +16,6 @@ const chatSchema = new Schema<IChat>(
   { timestamps: true }
 );
 
-const Chat = model<IChat>("chat", chatSchema);
+const Chat = model<IChat>("chats", chatSchema);
 
 export default Chat;

@@ -31,6 +31,10 @@ export const createChat = async (
   }
 };
 
+export const saveChat = (email, message) => {
+  
+};
+
 export const getChats = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email: emailA } = req.params;
