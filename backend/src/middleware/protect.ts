@@ -39,7 +39,6 @@ export const protect = async (
     const user = await User.findOne({ email: (decoded as any).email });
 
     if (!user) {
-      res.status(404).json({ msg: 'User not found', status: 0 });
       throw new Error("User not found");
     }
 
@@ -47,25 +46,23 @@ export const protect = async (
 
     next();
   } catch (error) {
-    console.error("Error caught: ", error.message);
+    console.error("Error caught:", error);
+  
+    if (error.name === "TokenExpiredError") {
+      return res.status(402).json({ msg: "Token expired, please login again" });
+    }
 
     if (error instanceof Error) {
-      switch(error.message){
+      switch (error.message) {
         case 'No token':
-          res.status(406).json({ msg: error.message, status: 0 });
-          break;
+          return res.status(406).json({ msg: error.message, status: 0 });
+        case 'User not found':
+          return res.status(404).json({ msg: "User not found", status: 0 });
         default:
-          res.status(500).json({ msg: 'An unexpected error occured', status: 0 });
-          break;
+          return res.status(500).json({ msg: 'An unexpected error occurred', status: 0 });
       }
-      return;
-    }
-    if (error.name === "TokenExpiredError") {
-      return res
-        .status(403)
-        .json({ msg: "Token expired, please login again" });
     }
 
-    res.status(401).json({ msg: "Not authorized, token failed" });
+    return res.status(401).json({ msg: "Not authorized, token failed" });
   }
 };

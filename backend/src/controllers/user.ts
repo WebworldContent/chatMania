@@ -50,7 +50,7 @@ export const loginUser = async (req: Request, res: Response) => {
 };
 
 export const fetchUserDetails = async (req: Request, res: Response): Promise<void> => {
-  const email = req.params.email || req.body?.user?.email;
+  const email = req.body?.user?.email;
 
   try {
     if (!email) {

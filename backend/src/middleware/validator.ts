@@ -37,6 +37,14 @@ const validateLogin: ValidationChain[] = [
     .withMessage("Please re-check password"),
 ];
 
+const validateMessage = [
+  body("message")
+    .notEmpty()
+    .trim()
+    .escape()
+    .withMessage("Please enter message")
+]
+
 const handleValidationError = (
   req: Request,
   res: Response,
@@ -50,4 +58,4 @@ const handleValidationError = (
   next();
 };
 
-export { validateRegister, handleValidationError, validateLogin };
+export { validateRegister, handleValidationError, validateLogin, validateMessage };

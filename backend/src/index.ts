@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import { PORT } from './config';
 import { Server } from 'socket.io';
 import cookieParser from 'cookie-parser'
+import chatRoute from './routes/chat';
 
 const app = express();
 const server = createServer(app)
@@ -25,20 +26,26 @@ app.use(cors({
     credentials: true
 })); // allowing cors request
 
+app.use(userRoute);
+app.use(chatRoute);
+
 //socket connection
 io.on('connection', (socket) => {
     console.log('connected to socket.io');
 
-    socket.on('setup', (userData) => {
-        socket.join(userData._id);
-        socket.emit('connected');
+    socket.on('one-to-one', async (userData) => {
+        console.log('recieve chat data:', userData);
+        // socket.join(userData.email);
     });
 
-    socket.on('join room', (room) => {
-        console.log('Joined room ', room);
-    });
+    // socket.on('join room', (room) => {
+    //     console.log('Joined room ', room);
+    // });
+
+    socket.on('disconnect', (reason) => {
+        console.log('Server is disconnected', reason);
+    })
 });
 
-app.use(userRoute);
 
 server.listen(PORT, () => {console.log(`Running on port : ${PORT}`)});
